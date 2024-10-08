@@ -1,37 +1,69 @@
 # Imports
 import time
 import os
+import pdfplumber
 
 # Forklaring av programmet
 print('\nVelkommen til \033[1mnøkkelordsøkeren\033[0m...\n')
 time.sleep(2)
 print('Dette programmet finner alle forekomster av \033[4mordet\033[0m du leter etter i valgt dokument/fil.')
-time.sleep(2)
+time.sleep(1)
 print('Skriv først inn navent på filen + filforlengelsen (f.eks: dokument.pdf) og klikk på \033[4mentertasten\033[0m.')
-time.sleep(2)
+time.sleep(1)
 print('Skriv så inn ditt \033[1mnøkkelord\033[0m. og klikk på \033[4mentertasten\033[0m.') 
-time.sleep(2)
-print('Etter du har skrevet inn \033[1mnøkkelordet\033[0m, vil programmet hente ut alle forekomster av setningen som omringer ordet + setningen før og etter.\n')
-time.sleep(4)
+time.sleep(1)
+print('Etter du har skrevet inn \033[1mnøkkelordet\033[0m, vil programmet hente ut alle forekomster av setningen som omringer ordet + setningen før og etter.')
+time.sleep(3)
 
+# Funksjon for å finne filnavn
 def find_filename():
-    ask_again = True
-    while ask_again == True:
+    while True:
 
-        filename = input('Skriv inn navnet på filen (med filforlengelse): ')
-        search_directory = os.path.expanduser('~/Documents/Python') # Define the path to the user's folder where document is placed
-        full_path = os.path.join(search_directory, filename) # Construct the full path
+        # Finner filsti til dokument (hvis fil eksisterer)
+        filename = input('\nSkriv inn navnet på filen (med filforlengelse): ')
+        search_directory = os.path.expanduser('~/Documents/Python') # Forhåndsdefinerer stien til brukerens mappe hvor dokumentet må plasseres
+        full_path = os.path.join(search_directory, filename) # Gjengir hele filstien
         
         if os.path.isfile(full_path):
-            print(f'Fil funnet i sti: "{full_path}"')
+            print(f'Fil funnet i sti: "{full_path}"\n')
+            
+            bruke_fil = input('Vil du bruke denne filen? [ja/nei]: ').lower()
+            
+            if bruke_fil == 'ja':
+                keyword = input('\nSkriv in nøkkelordet: ')
+
+                # Åpne pdf-filen
+                with pdfplumber.open(full_path) as pdf:
+                    #Iterer gjennom hver side i pdf-en
+                    for page in pdf.pages:
+                        # Hent ut teksten og ta hensyn til layout
+                        text = page.extract_text(layout=True) # layout=True hjelper å opprettholde kolonnestruktur
+
+                        
+                        print(text)
+
+        else:
+            print(f'Fil "{filename}" IKKE funnet i {full_path}.\n')
+
+'''
+def find_keyword():
+    while True:
+        bruke_fil = input('Vil du bruke denne filen? [ja/nei]: ').lower()
+        if bruke_fil == 'ja':
+            keyword = input('\nSkriv in nøkkelordet: ')
+            with pdfplumber.open())
             break
         else:
-            print(f'\nFil "{filename}" IKKE funnet i søk.')
+            print('\nAvslutter...')
+            break
+
+'''
 
 
 
 if __name__=='__main__':
     find_filename()
+    # find_keyword()
 
 
 '''
