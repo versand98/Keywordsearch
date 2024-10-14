@@ -7,63 +7,69 @@ import pdfplumber
 print('\nVelkommen til \033[1mnøkkelordsøkeren\033[0m...\n')
 time.sleep(2)
 print('Dette programmet finner alle forekomster av \033[4mordet\033[0m du leter etter i valgt dokument/fil.')
-time.sleep(1)
 print('Skriv først inn navent på filen + filforlengelsen (f.eks: dokument.pdf) og klikk på \033[4mentertasten\033[0m.')
-time.sleep(1)
 print('Skriv så inn ditt \033[1mnøkkelord\033[0m. og klikk på \033[4mentertasten\033[0m.') 
-time.sleep(1)
 print('Etter du har skrevet inn \033[1mnøkkelordet\033[0m, vil programmet hente ut alle forekomster av setningen som omringer ordet + setningen før og etter.')
 time.sleep(3)
 
+
+class MyFunctions:
+    def __init__(self):
+        self.filename = None
+        self.search_directory = os.path.expanduser('~/Documents/Python') # Forhåndsdefinerer stien til brukerens mappe hvor dokumentet må plasseres
+        self.full_path = None
+
 # Funksjon for å finne filnavn
-def find_filename():
-    while True:
+    def find_filename(self):
+        while True:
 
-        # Finner filsti til dokument (hvis fil eksisterer)
-        filename = input('\nSkriv inn navnet på filen (med filforlengelse): ')
-        search_directory = os.path.expanduser('~/Documents/Python') # Forhåndsdefinerer stien til brukerens mappe hvor dokumentet må plasseres
-        full_path = os.path.join(search_directory, filename) # Gjengir hele filstien
+            # Finner filsti til dokument (hvis fil eksisterer)
+            self.filename = input('\nSkriv inn navnet på filen (med filforlengelse): ')
+           
+            self.full_path = os.path.join(self.search_directory, self.filename) # Gjengir hele filstien
+            
+            if os.path.isfile(self.full_path):
+                print(f'Fil funnet i sti: "{self.full_path}"\n')
+                break
+
+            else:
+                print(f'Fil "{self.filename}" IKKE funnet.\n')
         
-        if os.path.isfile(full_path):
-            print(f'Fil funnet i sti: "{full_path}"\n')
-            
-            bruke_fil = input('Vil du bruke denne filen? [ja/nei]: ').lower()
-            
-            if bruke_fil == 'ja':
-                keyword = input('\nSkriv in nøkkelordet: ')
 
-                # Åpne pdf-filen
-                with pdfplumber.open(full_path) as pdf:
-                    #Iterer gjennom hver side i pdf-en
-                    for page in pdf.pages:
-                        # Hent ut teksten og ta hensyn til layout
-                        text = page.extract_text(layout=True) # layout=True hjelper å opprettholde kolonnestruktur
+    def find_keyword(self):
+        while True:
+        
+            keyword_counter = 0
+            keyword = input('\nSkriv in nøkkelordet: ').lower()
 
-                        
-                        print(text)
+            with pdfplumber.open(self.full_path) as pdf:
+                #Iterer gjennom hver side i pdf-en
+                for page in pdf.pages:
+                    # Hent ut teksten og ta hensyn til layout
+                    text = page.extract_text(layout=True).lower() # layout=True hjelper å opprettholde kolonnestruktur
 
-        else:
-            print(f'Fil "{filename}" IKKE funnet i {full_path}.\n')
+                    keyword_counter += text.count(keyword)
 
-'''
-def find_keyword():
-    while True:
-        bruke_fil = input('Vil du bruke denne filen? [ja/nei]: ').lower()
-        if bruke_fil == 'ja':
-            keyword = input('\nSkriv in nøkkelordet: ')
-            with pdfplumber.open())
-            break
-        else:
-            print('\nAvslutter...')
-            break
+            if keyword in text:
+                for i, keyword in text:
+                    print(i)
+                print(f'Totalt antall funn av {keyword}: {keyword_counter}')
+                break
+                
+            else:
+                print(f'Ingen treff på {keyword}')
 
-'''
+    
+
+                
+
 
 
 
 if __name__=='__main__':
-    find_filename()
-    # find_keyword()
+    my_function = MyFunctions()
+    my_function.find_filename()
+    my_function.find_keyword()
 
 
 '''
